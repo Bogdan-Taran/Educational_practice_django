@@ -1,0 +1,30 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Delete Book: {{ book.title }}</h1>
+
+  {% if book.bookinstance_set.all %}
+    <div class="alert alert-warning">
+      <p><strong>You cannot delete this book</strong></p>
+      <p>It has {{ book.bookinstance_set.count }} copy in the library</p>
+      <p>Please delete all instances first:</p>
+      <ul>
+        {% for inst in book.bookinstance_set.all %}
+          <li>
+            ID: {{ inst.id }}, Status: {{ inst.get_status_display }} 
+            {% if inst.borrower %}, Borrowed by: {{ inst.borrower.username }}{% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+      <a href="{% url 'book-detail' book.pk %}" class="btn btn-secondary">Back to book</a>
+    </div>
+  {% else %}
+    <p>Are you sure you want to delete <strong>"{{ book.title }}"</strong> by {{ book.author }}?</p>
+
+    <form method="post">
+      {% csrf_token %}
+      <input type="submit" value="Yes, delete this book" class="" />
+      <a href="{% url 'book-detail' book.pk %}" class="btn btn-secondary">Cancel</a>
+    </form>
+  {% endif %}
+{% endblock %}

@@ -148,12 +148,13 @@ class AuthorDelete(PermissionRequiredMixin, DeleteView):
 
 class BookCreate(PermissionRequiredMixin, CreateView):
     model = Book
-    fields = ['titile', 'author', 'summary', 'isbn', 'genre']
+    fields = ['title', 'author', 'summary', 'isbn', 'genre']
+    initial = {'summary': 'Enter a brief description'}
     permission_required = 'catalog.add_book'
 
 class BookUpdate(PermissionRequiredMixin, UpdateView):
     model = Book
-    fields = '__all__'
+    fields = ['title', 'author', 'summary', 'isbn', 'genre'] #но можно оставить какое-то одно если нужно менять одно.
     permission_required = 'catalog.change_book'
 
 class BookDelete(PermissionRequiredMixin, DeleteView):
@@ -161,6 +162,7 @@ class BookDelete(PermissionRequiredMixin, DeleteView):
     success_url = reverse_lazy('books')
     permission_required = 'catalog.delete_book'
 
+    # переопределяем, потому что у книги могут быть BookInstance
     def form_valid(self, form):
         try:
             self.object.delete()
